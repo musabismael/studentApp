@@ -1,2 +1,0 @@
-Landing Page
-The landing page contains a table that lists all students. The rows can be clicked and opens the Modal with Student Details (see below). This screen also contains a Add New Student Button that will be used to create a New Student. It also contains a dropdown on the top of the page that allows the user to switch roles

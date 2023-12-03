@@ -12,7 +12,6 @@ import {
   updateStudentNationality,
   updateFamilyMemberNationality,
 } from "../api";
-import PropTypes from "prop-types";
 
 const StudentModal = ({ student, role, onClose }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -26,42 +25,39 @@ const StudentModal = ({ student, role, onClose }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    
+    // Fetch the nationalities data from the API
     fetchNationalities().then((data) => setNationalities(data));
   }, []);
   useEffect(() => {
     if (student) {
       setModalIsOpen(true);
+      // ... (other initializations)
     }
   }, [student]);
-  const closeModal = () => {
-    setModalIsOpen(false);
-    onClose(); 
-  };
   const handleFirstNameChange = (e) => {
-    
+    // Update the first name state with the input value
     setFirstName(e.target.value);
   };
 
   const handleLastNameChange = (e) => {
-    
+    // Update the last name state with the input value
     setLastName(e.target.value);
   };
 
   const handleDateOfBirthChange = (date) => {
-    
+    // Update the date of birth state with the selected date
     setDateOfBirth(date);
   };
 
   const handleNationalityChange = (e) => {
-    
+    // Update the nationality state with the selected option
     setNationality(
       nationalities.find((n) => n.id === parseInt(e.target.value, 10))
     );
   };
 
   const handleFamilyNameChange = (index, e) => {
-    
+    // Update the family name state with the input value
     setFamily((prevFamily) =>
       prevFamily.map((f, i) =>
         i === index ? { ...f, name: e.target.value } : f
@@ -70,7 +66,7 @@ const StudentModal = ({ student, role, onClose }) => {
   };
 
   const handleFamilyRelationshipChange = (index, e) => {
-    
+    // Update the family relationship state with the selected option
     setFamily((prevFamily) =>
       prevFamily.map((f, i) =>
         i === index ? { ...f, relationship: e.target.value } : f
@@ -79,7 +75,7 @@ const StudentModal = ({ student, role, onClose }) => {
   };
 
   const handleFamilyNationalityChange = (index, e) => {
-    
+    // Update the family nationality state with the selected option
     setFamily((prevFamily) =>
       prevFamily.map((f, i) =>
         i === index
@@ -95,74 +91,66 @@ const StudentModal = ({ student, role, onClose }) => {
   };
 
   const handleAddFamilyMember = () => {
-    
+    // Create a new family member object with empty fields
     const newFamilyMember = {
       id: null,
       name: "",
       relationship: "",
       nationality: "",
     };
-    
+    // Append the new family member to the family state
     setFamily((prevFamily) => [...prevFamily, newFamilyMember]);
   };
 
   const handleDeleteFamilyMember = (index) => {
-    const familyMemberIdToDelete = family[index].id;
-    deleteFamilyMember(familyMemberIdToDelete)
-      .then(() => {
-        
-        setFamily((prevFamily) => prevFamily.filter((_, i) => i !== index));
-      })
-      .catch((error) => {
-        
-        console.error("Error deleting family member:", error);
-      });
+    // Remove the family member from the family state
+    setFamily((prevFamily) => prevFamily.filter((f, i) => i !== index));
   };
 
   const handleSubmit = () => {
-    
+    // Validate the input fields
     if (!firstName || !lastName || !dateOfBirth || !nationality) {
-      
+      // Set the error state with a message
       setError("Please fill in all the fields.");
       return;
     }
     if (family.some((f) => !f.name || !f.relationship || !f.nationality)) {
-      
+      // Set the error state with a message
       setError("Please fill in all the family members' fields.");
       return;
     }
-    
+    // Clear the error state
     setError(null);
-    
+    // Set the loading state to true
     setLoading(true);
-    
+    // Check if the student is new or existing
     if (student.id) {
-      
+      // Update the existing student
       updateStudent(student.id, {
         firstName,
         lastName,
         dateOfBirth: dateOfBirth.toISOString(),
       })
         .then(() => {
-          
+          // Update the student's nationality
           return updateStudentNationality(student.id, nationality.id);
         })
         .then(() => {
-          
+          // Update the student's family members
           return Promise.all(
             family.map((f) => {
               if (f.id) {
-                
+                // Update the existing family member
                 return updateFamilyMember(f.id, {
                   name: f.name,
                   relationship: f.relationship,
                   dateOfBirth: f.dateOfBirth,
                 }).then(() => {
-                  
+                  // Update the family member's nationality
                   return updateFamilyMemberNationality(f.id, f.nationality.id);
                 });
               } else {
-                
+                // Create a new family member
                 return createFamilyMember(student.id, {
                   name: f.name,
                   relationship: f.relationship,
@@ -174,19 +162,19 @@ const StudentModal = ({ student, role, onClose }) => {
           );
         })
         .then(() => {
-          
+          // Set the loading state to false
           setLoading(false);
-          
+          // Close the modal
           onClose();
         })
         .catch((err) => {
-          
+          // Set the loading state to false
           setLoading(false);
-          
+          // Set the error state with the message
           setError(err.message);
         });
     } else {
-      
+      // Create a new student
       createStudent({
         firstName,
         lastName,
@@ -194,7 +182,7 @@ const StudentModal = ({ student, role, onClose }) => {
         nationality: nationality.id,
       })
         .then((data) => {
-          
+          // Create the student's family members
           return Promise.all(
             family.map((f) =>
               createFamilyMember(data.id, {
@@ -207,29 +195,29 @@ const StudentModal = ({ student, role, onClose }) => {
           );
         })
         .then(() => {
-          
+          // Set the loading state to false
           setLoading(false);
-          
+          // Close the modal
           onClose();
         })
         .catch((err) => {
-          
+          // Set the loading state to false
           setLoading(false);
-          
+          // Set the error state with the message
           setError(err.message);
         });
     }
   };
 
   const handleCancel = () => {
-    
+    // Close the modal
     onClose();
   };
 
   return (
     <Modal
-      isOpen={modalIsOpen}
-      onRequestClose={closeModal}
+      isOpen={true}
+      onRequestClose={onClose}
       className="modal-content"
       overlayClassName="modal-overlay"
     >
@@ -375,44 +363,4 @@ const StudentModal = ({ student, role, onClose }) => {
     </Modal>
   );
 };
-StudentModal.propTypes = {
-  student: PropTypes.shape({
-    id: PropTypes.number,
-    firstName: PropTypes.string,
-    lastName: PropTypes.string,
-    dateOfBirth: PropTypes.string,
-    nationality: PropTypes.shape({
-      id: PropTypes.number,
-      title: PropTypes.string,
-    }),
-    family: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number,
-        name: PropTypes.string,
-        relationship: PropTypes.string,
-        dateOfBirth: PropTypes.string,
-        nationality: PropTypes.shape({
-          id: PropTypes.number,
-          title: PropTypes.string,
-        }),
-      })
-    ),
-  }),
-  role: PropTypes.string,
-  onClose: PropTypes.func,
-};
-
-StudentModal.defaultProps = {
-  student: {
-    id: null,
-    firstName: "",
-    lastName: "",
-    dateOfBirth: "",
-    nationality: { id: null, title: "" },
-    family: [],
-  },
-  role: "",
-  onClose: () => {},
-};
-
 export default StudentModal;

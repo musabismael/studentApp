@@ -116,12 +116,14 @@ const LandingPage = () => {
               </td>
               <td className="border px-4 py-2 text-center">
                 {student.family && student.family.length ? (
-                  <span key={student.family.length}>{student.family.length}</span>
+                  <span>{student.family.length}</span>
                 ) : (
                   <span>0</span>
                 )}
               </td>
-             
+              <td className="border px-4 py-2 text-center">
+                {student.family.length}
+              </td>
               <td className="border px-4 py-2 text-center">
                 {student.approved ? (
                   <span className="text-green-500">Approved</span>

@@ -4,7 +4,8 @@ import StudentModal from "./StudentModal";
 import { fetchStudents, updateStudent } from "../api";
 
 const LandingPage = () => {
-  const [students, setStudents] = useState([]);
+  const [students, 
+  ] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [role, setRole] = useState("Admin");
   const [showModal, setShowModal] = useState(false);
@@ -115,13 +116,8 @@ const LandingPage = () => {
                 {student.nationality}
               </td>
               <td className="border px-4 py-2 text-center">
-                {student.family && student.family.length ? (
-                  <span key={student.family.length}>{student.family.length}</span>
-                ) : (
-                  <span>0</span>
-                )}
+                {student.family.length}
               </td>
-             
               <td className="border px-4 py-2 text-center">
                 {student.approved ? (
                   <span className="text-green-500">Approved</span>

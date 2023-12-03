@@ -63,9 +63,9 @@ const LandingPage = () => {
     // Reset the selected student to null
     setSelectedStudent(null);
   };
-  if (error) {
-    return <div>Error: {error}</div>;
- }
+if (error) {
+   return <div>Error: {error}</div>;
+}
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">Student Registration System</h1>
@@ -115,13 +115,8 @@ const LandingPage = () => {
                 {student.nationality}
               </td>
               <td className="border px-4 py-2 text-center">
-                {student.family && student.family.length ? (
-                  <span key={student.family.length}>{student.family.length}</span>
-                ) : (
-                  <span>0</span>
-                )}
+                {student.family.length}
               </td>
-             
               <td className="border px-4 py-2 text-center">
                 {student.approved ? (
                   <span className="text-green-500">Approved</span>
