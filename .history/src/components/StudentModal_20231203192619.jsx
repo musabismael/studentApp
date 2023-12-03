@@ -49,7 +49,6 @@ const StudentModal = ({ student, role, onClose }) => {
             (n) => n.id === student.nationality.id
           );
           setNationality(studentNationality);
-          console.log('Testttt',nationalities);
         }
       })
       .catch((error) => {
@@ -290,7 +289,7 @@ const StudentModal = ({ student, role, onClose }) => {
             >
               {nationalities.map((n) => (
                 <option key={n.id} value={n.id}>
-                  {n.title}
+                  {n}
                 </option>
               ))}
             </select>
@@ -350,7 +349,7 @@ const StudentModal = ({ student, role, onClose }) => {
                 disabled={role === "Admin" && student.approved}
               >
                 {nationalities.map((n) => (
-                  <option  key={n.id} value={n.id}>
+                  <option key={n.id} value={n.id}>
                     {n.title}
                   </option>
                 ))}

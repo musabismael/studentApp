@@ -49,7 +49,6 @@ const StudentModal = ({ student, role, onClose }) => {
             (n) => n.id === student.nationality.id
           );
           setNationality(studentNationality);
-          console.log('Testttt',nationalities);
         }
       })
       .catch((error) => {
@@ -70,7 +69,7 @@ const StudentModal = ({ student, role, onClose }) => {
   const handleFirstNameChange = (e) => {
     setFirstName(e.target.value);
   };
-
+ 
   const handleLastNameChange = (e) => {
     setLastName(e.target.value);
   };
@@ -121,7 +120,7 @@ const StudentModal = ({ student, role, onClose }) => {
       id: null,
       name: "",
       relationship: "",
-      nationality: { id: null, title: "" },
+      nationality: "",
     };
 
     setFamily((prevFamily) => [...prevFamily, newFamilyMember]);
@@ -345,12 +344,12 @@ const StudentModal = ({ student, role, onClose }) => {
               <select
                 id={`familyNationality${i}`}
                 className="border rounded px-2 py-1"
-                value={f.nationality ? f.nationality.id : ""}
+                value={f.nationality.id}
                 onChange={(e) => handleFamilyNationalityChange(i, e)}
                 disabled={role === "Admin" && student.approved}
               >
                 {nationalities.map((n) => (
-                  <option  key={n.id} value={n.id}>
+                  <option key={n.id} value={n.id}>
                     {n.title}
                   </option>
                 ))}

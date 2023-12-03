@@ -13,8 +13,6 @@ import {
   updateFamilyMemberNationality,
 } from "../api";
 import PropTypes from "prop-types";
-import "react-datepicker/dist/react-datepicker.css";
-
 const customStyles = {
   content: {
     top: "50%",
@@ -26,6 +24,7 @@ const customStyles = {
   },
 };
 const StudentModal = ({ student, role, onClose }) => {
+  let subtitle;
   const initialDateOfBirth = student.dateOfBirth
     ? new Date(student.dateOfBirth)
     : new Date();
@@ -49,7 +48,6 @@ const StudentModal = ({ student, role, onClose }) => {
             (n) => n.id === student.nationality.id
           );
           setNationality(studentNationality);
-          console.log('Testttt',nationalities);
         }
       })
       .catch((error) => {
@@ -70,7 +68,10 @@ const StudentModal = ({ student, role, onClose }) => {
   const handleFirstNameChange = (e) => {
     setFirstName(e.target.value);
   };
-
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = "#f00";
+  }
   const handleLastNameChange = (e) => {
     setLastName(e.target.value);
   };
@@ -121,7 +122,7 @@ const StudentModal = ({ student, role, onClose }) => {
       id: null,
       name: "",
       relationship: "",
-      nationality: { id: null, title: "" },
+      nationality: "",
     };
 
     setFamily((prevFamily) => [...prevFamily, newFamilyMember]);
@@ -236,6 +237,7 @@ const StudentModal = ({ student, role, onClose }) => {
       isOpen={modalIsOpen}
       onRequestClose={closeModal}
       overlayClassName="modal-overlay"
+      onAfterOpen={afterOpenModal}
       style={customStyles}
       contentLabel="Student Information"
     >
@@ -281,22 +283,22 @@ const StudentModal = ({ student, role, onClose }) => {
         <div className="flex flex-col gap-2">
           <label htmlFor="nationality">Nationality</label>
           {nationalities.length > 0 ? (
-            <select
-              id="nationality"
-              className="border rounded px-2 py-1"
-              value={nationality ? nationality.id : ""}
-              onChange={handleNationalityChange}
-              disabled={role === "Admin" && student.approved}
-            >
-              {nationalities.map((n) => (
-                <option key={n.id} value={n.id}>
-                  {n.title}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <p>Loading nationalities...</p>
-          )}
+  <select
+    id="nationality"
+    className="border rounded px-2 py-1"
+    value={nationality ? nationality.id : ""}
+    onChange={handleNationalityChange}
+    disabled={role === "Admin" && student.approved}
+  >
+    {nationalities.map((n) => (
+      <option key={n.id} value={n.id}>
+        {n.title}
+      </option>
+    ))}
+  </select>
+) : (
+  <p>Loading nationalities...</p>
+)}
         </div>
       </div>
       <div className="flex flex-col gap-4 mb-4">
@@ -345,12 +347,12 @@ const StudentModal = ({ student, role, onClose }) => {
               <select
                 id={`familyNationality${i}`}
                 className="border rounded px-2 py-1"
-                value={f.nationality ? f.nationality.id : ""}
+                value={f.nationality.id}
                 onChange={(e) => handleFamilyNationalityChange(i, e)}
                 disabled={role === "Admin" && student.approved}
               >
                 {nationalities.map((n) => (
-                  <option  key={n.id} value={n.id}>
+                  <option key={n.id} value={n.id}>
                     {n.title}
                   </option>
                 ))}

@@ -350,7 +350,7 @@ const StudentModal = ({ student, role, onClose }) => {
                 disabled={role === "Admin" && student.approved}
               >
                 {nationalities.map((n) => (
-                  <option  key={n.id} value={n.id}>
+                  <option key={n.id} value={n.id}>
                     {n.title}
                   </option>
                 ))}
