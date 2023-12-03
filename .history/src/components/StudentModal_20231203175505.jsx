@@ -15,19 +15,19 @@ import {
 import PropTypes from "prop-types";
 const customStyles = {
   content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
   },
 };
 const StudentModal = ({ student, role, onClose }) => {
   let subtitle;
   const initialDateOfBirth = student.dateOfBirth
-    ? new Date(student.dateOfBirth)
-    : new Date();
+  ? new Date(student.dateOfBirth)
+  : new Date(); 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [firstName, setFirstName] = useState(student.firstName);
   const [lastName, setLastName] = useState(student.lastName);
@@ -60,7 +60,7 @@ const StudentModal = ({ student, role, onClose }) => {
   };
   function afterOpenModal() {
     // references are now sync'd and can be accessed.
-    subtitle.style.color = "#f00";
+    subtitle.style.color = '#f00';
   }
   const handleLastNameChange = (e) => {
     setLastName(e.target.value);
@@ -226,6 +226,7 @@ const StudentModal = ({ student, role, onClose }) => {
     <Modal
       isOpen={modalIsOpen}
       onRequestClose={closeModal}
+      className="modal-content"
       overlayClassName="modal-overlay"
       onAfterOpen={afterOpenModal}
       style={customStyles}

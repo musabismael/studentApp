@@ -232,7 +232,7 @@ const StudentModal = ({ student, role, onClose }) => {
       contentLabel="Student Information"
     >
       <h2 className="text-2xl font-bold mb-4">
-        {student.id ? "Edit Student" : "Create Student"}
+        {student.id ? "Edit Student" : ""}
       </h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <div className="flex flex-col gap-4 mb-4">
