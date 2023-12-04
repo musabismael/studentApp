@@ -11,7 +11,6 @@ import {
   deleteFamilyMember,
   updateStudentNationality,
   updateFamilyMemberNationality,
-  fetchFamilyMembers
 } from "../api";
 import PropTypes from "prop-types";
 import "react-datepicker/dist/react-datepicker.css";

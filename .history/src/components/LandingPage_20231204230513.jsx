@@ -10,7 +10,7 @@ import {
 
 const LandingPage = () => {
   const [students, setStudents] = useState([]);
-  const [nationality, setNationality] = useState("");
+  const [nationality, setNationality] = useState([]);
 
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [role, setRole] = useState("Admin");
@@ -115,12 +115,11 @@ const LandingPage = () => {
 
         <tbody>
           {students.map((student) => {
-            fetchStudentNationality(student.ID).then((data) => {
-              setNationality(data.nationality.Title);
-            });           
-            // get fetchFamilyMembers length   for student ID
-           
-
+            // Get the data of the fetchStudentNationality
+            fetchStudentNationality(student.ID)
+              .then((data) => setNationality(data.Title))
+              .catch((error) => setError(error.message));
+            log
             return (
               <tr key={student.ID}>
                 <td className="border px-4 py-2 text-center">{student.ID}</td>
@@ -136,7 +135,6 @@ const LandingPage = () => {
                 <td className="border px-4 py-2 text-center">{nationality}</td>
 
                 <td className="border px-4 py-2 text-center">
-                  
                   {student.family && student.family.length ? (
                     <span key={student.family.length}>
                       {student.family.length}

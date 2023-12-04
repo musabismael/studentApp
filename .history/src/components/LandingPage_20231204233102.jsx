@@ -118,8 +118,6 @@ const LandingPage = () => {
             fetchStudentNationality(student.ID).then((data) => {
               setNationality(data.nationality.Title);
             });           
-            // get fetchFamilyMembers length   for student ID
-           
 
             return (
               <tr key={student.ID}>

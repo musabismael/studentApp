@@ -11,7 +11,6 @@ import {
   deleteFamilyMember,
   updateStudentNationality,
   updateFamilyMemberNationality,
-  fetchFamilyMembers
 } from "../api";
 import PropTypes from "prop-types";
 import "react-datepicker/dist/react-datepicker.css";
@@ -39,7 +38,7 @@ const StudentModal = ({ student, role, onClose }) => {
   const [firstName, setFirstName] = useState(student.firstName);
   const [lastName, setLastName] = useState(student.lastName);
   const [dateOfBirth, setDateOfBirth] = useState(initialDateOfBirth);
-  const [nationality, setNationality] = useState(student.nationality || { ID: null, Title: "" });
+  const [nationality, setNationality] = useState(student.nationality || { id: null, Title: "" });
   const [family, setFamily] = useState(student.family);
   const [nationalities, setNationalities] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -266,7 +265,7 @@ const StudentModal = ({ student, role, onClose }) => {
             className="border rounded px-2 py-1"
             value={firstName}
             onChange={handleFirstNameChange}
-            disabled={role === "Admin" && student.approved}
+            disabled={role === "Admin" && student}
           />
         </div>
         <div className="flex flex-col gap-2">

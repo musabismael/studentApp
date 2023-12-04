@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { FiUserPlus, FiEdit, FiCheck } from "react-icons/fi";
 import StudentModal from "./StudentModal";
-import {
-  fetchStudents,
-  updateStudent,
-  fetchFamilyMembers,
-  fetchStudentNationality,
-} from "../api";
+import { fetchStudents, updateStudent ,fetchStudentNationality ,fetchFamilyMembers } from "../api";
 
 const LandingPage = () => {
   const [students, setStudents] = useState([]);
-  const [nationality, setNationality] = useState("");
-
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [role, setRole] = useState("Admin");
   const [showModal, setShowModal] = useState(false);
@@ -21,7 +14,11 @@ const LandingPage = () => {
     fetchStudents()
       .then((data) => setStudents(data))
       .catch((error) => setError(error.message));
-  }, []);
+
+      fetchStudents()
+      .then((data) => setStudents(data))
+      .catch((error) => setError(error.message));
+ }, []);
 
   const handleRoleChange = (e) => {
     // Change the role of the user
@@ -62,6 +59,7 @@ const LandingPage = () => {
         prevStudents.map((s) => (s.id === student.ID ? student : s))
       );
     });
+
   };
 
   const handleModalClose = () => {
@@ -72,14 +70,14 @@ const LandingPage = () => {
   };
   if (error) {
     return <div>Error: {error}</div>;
-  }
+ }
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">Student Registration System</h1>
 
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center">
-          <span className="mr-2">Role:</span>
+          <span className="mr-2">Role:</span> 
 
           <select
             className="border rounded px-2 py-1"
@@ -114,70 +112,64 @@ const LandingPage = () => {
         </thead>
 
         <tbody>
-          {students.map((student) => {
-            fetchStudentNationality(student.ID).then((data) => {
-              setNationality(data.nationality.Title);
-            });           
-            // get fetchFamilyMembers length   for student ID
-           
+          {students.map((student) => (
+            <tr key={student.ID}>
+              <td className="border px-4 py-2 text-center">{student.ID}</td>
 
-            return (
-              <tr key={student.ID}>
-                <td className="border px-4 py-2 text-center">{student.ID}</td>
+              <td className="border px-4 py-2">
+                {student.firstName} {student.lastName}
+              </td>
 
-                <td className="border px-4 py-2">
-                  {student.firstName} {student.lastName}
-                </td>
+              <td className="border px-4 py-2 text-center">
+                {student.dateOfBirth}
+              </td>
 
-                <td className="border px-4 py-2 text-center">
-                  {student.dateOfBirth}
-                </td>
+              <td className="border px-4 py-2 text-center">
+                {student.nationality}
+              </td>
 
-                <td className="border px-4 py-2 text-center">{nationality}</td>
-
-                <td className="border px-4 py-2 text-center">
+              <td className="border px-4 py-2 text-center">
+                {student.family && student.family.length ? (
                   
-                  {student.family && student.family.length ? (
-                    <span key={student.family.length}>
-                      {student.family.length}
-                    </span>
-                  ) : (
-                    <span>0</span>
-                  )}
-                </td>
+                  <span key={student.family.length}>
+                    {student.family.length}
+                  </span>
+                ) : (
+                  <span>0</span>
+                )}
+              </td>
 
-                <td className="border px-4 py-2 text-center">
-                  {student.approved ? (
-                    <span className="text-green-500">Approved</span>
-                  ) : (
-                    <span className="text-red-500">Pending</span>
-                  )}
-                </td>
+              <td className="border px-4 py-2 text-center">
+                {student.approved ? (
+                  <span className="text-green-500">Approved</span>
+                ) : (
+                  <span className="text-red-500">Pending</span>
+                )}
+              </td>
 
-                <td className="border px-4 py-2 flex justify-center">
-                  {role === "Admin" && !student.approved && (
-                    <button
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white rounded px-2 py-1 mr-2 flex items-center"
-                      onClick={() => handleEditStudent(student)}
-                    >
-                      <FiEdit className="mr-1" />
-                      Edit
-                    </button>
-                  )}
+              <td className="border px-4 py-2 flex justify-center">
+                {role === "Admin" && !student.approved && (
+                  <button
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white rounded px-2 py-1 mr-2 flex items-center"
+                    onClick={() => handleEditStudent(student)}
+                  >
+                    <FiEdit className="mr-1" />
+                    Edit
+                  </button>
+                )}
 
-                  {role === "Registrar" && !student.approved && (
-                    <button
-                      className="bg-green-500 hover:bg-green-600 text-white rounded px-2 py-1 flex items-center"
-                      onClick={() => handleApproveStudent(student)}
-                    >
-                      <FiCheck className="mr-1" />
-                      Approve
-                    </button>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
+                {role === "Registrar" && !student.approved && (
+                  <button
+                    className="bg-green-500 hover:bg-green-600 text-white rounded px-2 py-1 flex items-center"
+                    onClick={() => handleApproveStudent(student)}
+                  >
+                    <FiCheck className="mr-1" />
+                    Approve
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
 

@@ -119,7 +119,8 @@ const LandingPage = () => {
               setNationality(data.nationality.Title);
             });           
             // get fetchFamilyMembers length   for student ID
-           
+            fetchFamilyMembers(student.ID).then((data) => {
+              
 
             return (
               <tr key={student.ID}>

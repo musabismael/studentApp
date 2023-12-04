@@ -119,8 +119,36 @@ const LandingPage = () => {
               setNationality(data.nationality.Title);
             });           
             // get fetchFamilyMembers length   for student ID
-           
-
+            fetchFamilyMembers(student.ID).then((data) => {
+              console.log(data.length)
+            });
+            // get fetchFamilyMembers length   for student ID
+            // get fetchStudentNationality for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
+            // get fetchFamilyMembers for student ID
             return (
               <tr key={student.ID}>
                 <td className="border px-4 py-2 text-center">{student.ID}</td>
