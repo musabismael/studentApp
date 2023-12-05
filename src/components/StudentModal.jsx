@@ -145,9 +145,18 @@ const StudentModal = ({ student, role, onClose }) => {
   };
 
   const handleDeleteFamilyMember = (index) => {
-    console.log(index);
-    setFamily((prevFamily) => prevFamily.filter((f, i) => i !== index));
-
+    const familyMemberIdToDelete = family[index].ID;
+    if (familyMemberIdToDelete) {
+      deleteFamilyMember(familyMemberIdToDelete)
+        .then(() => {
+          setFamily((prevFamily) => prevFamily.filter((f, i) => i !== index));
+        })
+        .catch((error) => {
+          console.error("Error deleting family member:", error.message);
+        });
+    } else {
+      setFamily((prevFamily) => prevFamily.filter((f, i) => i !== index));
+    }
   };
 
   const handleSubmit = () => {
