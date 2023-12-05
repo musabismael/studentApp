@@ -36,6 +36,7 @@ const StudentModal = ({ student, role, onClose }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [firstName, setFirstName] = useState(student.firstName);
   const [lastName, setLastName] = useState(student.lastName);
+
   const [dateOfBirth, setDateOfBirth] = useState(initialDateOfBirth);
   const [nationality, setNationality] = useState(
     student.nationality || { ID: null, Title: "" }
@@ -102,14 +103,20 @@ const StudentModal = ({ student, role, onClose }) => {
     setNationality(selectedNationality || { ID: null, Title: "" });
   };
 
-  const handleFamilyNameChange = (index, e) => {
+  const handleFamilyFristNameChange = (index, e) => {
     setFamily((prevFamily) =>
       prevFamily.map((f, i) =>
-        i === index ? { ...f, name: e.target.value } : f
+        i === index ? { ...f, firstName: e.target.value } : f
       )
     );
   };
-
+  const handleFamilyLastNameChange = (index, e) => {
+    setFamily((prevFamily) =>
+      prevFamily.map((f, i) =>
+        i === index ? { ...f, lastName: e.target.value } : f
+      )
+    );
+  };
   const handleFamilyRelationshipChange = (index, e) => {
     setFamily((prevFamily) =>
       prevFamily.map((f, i) =>
@@ -136,7 +143,8 @@ const StudentModal = ({ student, role, onClose }) => {
   const handleAddFamilyMember = () => {
     const newFamilyMember = {
       id: null,
-      name: "",
+      firstName: "",
+      lastName: "",
       relationship: "",
       nationality: { ID: null, Title: "" },
     };
@@ -167,7 +175,11 @@ const StudentModal = ({ student, role, onClose }) => {
       );
       return;
     }
-    if (family.some((f) => !f.name || !f.relationship || !f.nationality)) {
+    if (
+      family.some(
+        (f) => !f.firstName || !f.lastName || !f.relationship || !f.nationality
+      )
+    ) {
       setError("Please fill in all the family members' fields.");
       return;
     }
@@ -181,6 +193,8 @@ const StudentModal = ({ student, role, onClose }) => {
         firstName,
         lastName,
         dateOfBirth: dateOfBirth.toISOString(),
+        nationality: nationality?.ID ?? undefined,
+        
       })
         .then(() => {
           return updateStudentNationality(student.ID, nationality.ID);
@@ -190,15 +204,19 @@ const StudentModal = ({ student, role, onClose }) => {
             family.map((f) => {
               if (f.id) {
                 return updateFamilyMember(f.id, {
-                  name: f.name,
+                  firstName: f.firstName,
+                  lastName: f.lastName,
                   relationship: f.relationship,
                   dateOfBirth: f.dateOfBirth,
+                  nationality: f.nationality?.ID ?? undefined,
+
                 }).then(() => {
                   return updateFamilyMemberNationality(f.id, f.nationality.ID);
                 });
               } else {
                 return createFamilyMember(student.ID, {
-                  name: f.name,
+                  firstName: f.firstName,
+                  lastName: f.lastName,
                   relationship: f.relationship,
                   dateOfBirth: f.dateOfBirth,
                   nationality: f.nationality.ID,
@@ -227,7 +245,8 @@ const StudentModal = ({ student, role, onClose }) => {
           return Promise.all(
             family.map((f) =>
               createFamilyMember(data.id, {
-                name: f.name,
+                firstName: f.firstName,
+                lastName: f.lastName,
                 relationship: f.relationship,
                 dateOfBirth: f.dateOfBirth,
                 nationality: f.nationality.ID,
@@ -342,13 +361,24 @@ const StudentModal = ({ student, role, onClose }) => {
               </button>
             </div>
             <div className="flex flex-col gap-2">
-              <label htmlFor={`familyName${i}`}>Name</label>
+              <label htmlFor={`familyName${i}`}>Frist Name</label>
               <input
                 id={`familyName${i}`}
                 type="text"
                 className="border rounded px-2 py-1"
-                value={f.name}
-                onChange={(e) => handleFamilyNameChange(i, e)}
+                value={f.firstName}
+                onChange={(e) => handleFamilyFristNameChange(i, e)}
+                disabled={role === "Admin" && student.approved}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor={`familyName${i}`}>Last Name</label>
+              <input
+                id={`familyName${i}`}
+                type="text"
+                className="border rounded px-2 py-1"
+                value={f.lastName}
+                onChange={(e) => handleFamilyLastNameChange(i, e)}
                 disabled={role === "Admin" && student.approved}
               />
             </div>
@@ -420,7 +450,7 @@ StudentModal.propTypes = {
     }),
     family: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.number,
+        ID: PropTypes.number,
         name: PropTypes.string,
         relationship: PropTypes.string,
         dateOfBirth: PropTypes.string,
@@ -441,7 +471,7 @@ StudentModal.defaultProps = {
     firstName: "",
     lastName: "",
     dateOfBirth: "",
-    nationality: { id: null, Title: "" },
+    nationality: { ID: null, Title: "" },
     family: [],
   },
   role: "",
