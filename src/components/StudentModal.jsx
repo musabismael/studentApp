@@ -11,6 +11,7 @@ import {
   deleteFamilyMember,
   updateStudentNationality,
   fetchFamilyMembers,
+  fetchStudentNationality,
   updateFamilyMemberNationality,
 } from "../api";
 import PropTypes from "prop-types";
@@ -30,19 +31,18 @@ const customStyles = {
 };
 
 const StudentModal = ({ student, role, onClose }) => {
+  console.log('student:',student);
   const initialDateOfBirth = student.dateOfBirth
     ? new Date(student.dateOfBirth)
     : new Date();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [firstName, setFirstName] = useState(student.firstName);
   const [lastName, setLastName] = useState(student.lastName);
-
   const [dateOfBirth, setDateOfBirth] = useState(initialDateOfBirth);
-  const [nationality, setNationality] = useState(
-    student.nationality || { ID: null, Title: "" }
-  );
-  const [family, setFamily] = useState(student.family || []);
+  const [nationality, setNationality] = useState(student.nationality || []);
+  const [family, setFamily] = useState(student.familyMembers || []);
   const [nationalities, setNationalities] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -50,32 +50,29 @@ const StudentModal = ({ student, role, onClose }) => {
     fetchNationalities()
       .then((data) => {
         setNationalities(data);
-        if (student.nationality) {
-          const studentNationality = data.find(
-            (n) => n.id === student.nationality.ID
-          );
-          setNationality(studentNationality);
-        }
       })
       .catch((error) => {
-        console.error("Fetch Nationalities Error:", error);
+        console.error("Fetch Nationalities Error:", error.message);
       });
-  }, [student]);
-
-  useEffect(() => {
     if (student) {
       setModalIsOpen(true);
     }
-    if (student && student.ID) {
+    if (student) {
       fetchFamilyMembers(student.ID)
         .then((familyData) => {
           setFamily(familyData);
         })
         .catch((error) => {
-          console.error("Fetch Family Members Error:", error);
+          console.error("Fetch Family Members Error:", error.message);
         });
     }
   }, [student]);
+
+  useEffect(() => {
+    fetchStudentNationality(student.ID).then((response) => {
+      setNationality(response.nationality);
+    });
+  }, []);
 
   const closeModal = () => {
     setModalIsOpen(false);
@@ -99,7 +96,6 @@ const StudentModal = ({ student, role, onClose }) => {
     const selectedNationality = nationalities.find(
       (n) => n.ID === selectedNationalityId
     );
-
     setNationality(selectedNationality || { ID: null, Title: "" });
   };
 
@@ -157,19 +153,18 @@ const StudentModal = ({ student, role, onClose }) => {
     if (familyMemberIdToDelete) {
       deleteFamilyMember(familyMemberIdToDelete)
         .then(() => {
-          setFamily((prevFamily) => prevFamily.filter((f, i) => i !== index));
+          setFamily((prevFamily) => prevFamily.filter((_, i) => i !== index));
         })
         .catch((error) => {
           console.error("Error deleting family member:", error.message);
         });
     } else {
-      setFamily((prevFamily) => prevFamily.filter((f, i) => i !== index));
+      setFamily((prevFamily) => prevFamily.filter((_, i) => i !== index));
     }
   };
 
   const handleSubmit = () => {
     if (!firstName || !lastName || !dateOfBirth || !nationality) {
-      console.log(nationality);
       setError(
         "Please fill in all the fields: First Name, Last Name, Date of Birth, and Nationality."
       );
@@ -193,8 +188,7 @@ const StudentModal = ({ student, role, onClose }) => {
         firstName,
         lastName,
         dateOfBirth: dateOfBirth.toISOString(),
-        nationality: nationality?.ID ?? undefined,
-        
+        nationality: nationality?.ID ?? 1,
       })
         .then(() => {
           return updateStudentNationality(student.ID, nationality.ID);
@@ -208,8 +202,7 @@ const StudentModal = ({ student, role, onClose }) => {
                   lastName: f.lastName,
                   relationship: f.relationship,
                   dateOfBirth: f.dateOfBirth,
-                  nationality: f.nationality?.ID ?? undefined,
-
+                  nationality: f.nationality?.ID ?? 0,
                 }).then(() => {
                   return updateFamilyMemberNationality(f.id, f.nationality.ID);
                 });
@@ -219,7 +212,7 @@ const StudentModal = ({ student, role, onClose }) => {
                   lastName: f.lastName,
                   relationship: f.relationship,
                   dateOfBirth: f.dateOfBirth,
-                  nationality: f.nationality.ID,
+                  nationality: f.nationality?.ID ?? 0,
                 });
               }
             })
@@ -249,7 +242,7 @@ const StudentModal = ({ student, role, onClose }) => {
                 lastName: f.lastName,
                 relationship: f.relationship,
                 dateOfBirth: f.dateOfBirth,
-                nationality: f.nationality.ID,
+                nationality: f.nationality?.ID ?? 0,
               })
             )
           );
@@ -272,7 +265,7 @@ const StudentModal = ({ student, role, onClose }) => {
 
   const memoizedNationalities = useMemo(() => {
     return nationalities.map((n) => (
-      <option key={n.ID} value={n.ID}>
+      <option key={n.ID} value={n.ID} data-value={n}>
         {n.Title}
       </option>
     ));
@@ -331,7 +324,7 @@ const StudentModal = ({ student, role, onClose }) => {
             <select
               id="nationality"
               className="border rounded px-2 py-1"
-              value={nationality ? nationality.ID : ""}
+              value={nationality ? nationality.ID : 0}
               onChange={handleNationalityChange}
               disabled={role === "Admin" && student.approved}
             >
@@ -344,72 +337,77 @@ const StudentModal = ({ student, role, onClose }) => {
       </div>
       <div className="flex flex-col gap-4 mb-4">
         <h3 className="text-xl font-semibold">Family Information</h3>
-        {family.map((f, i) => (
-          <div
-            key={f.id || i}
-            className="flex flex-col gap-2 border rounded p-4"
-          >
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-medium">
-                Family Member #{i + 1}
-              </span>
-              <button
-                className="bg-red-500 hover:bg-red-600 text-white rounded px-2 py-1 flex items-center"
-                onClick={() => handleDeleteFamilyMember(i)}
-              >
-                <FiTrash className="mr-1" />
-              </button>
+        {family && family.length > 0 ? (
+          family.map((f, i) => (
+            <div
+              key={f.id || i}
+              className="flex flex-col gap-2 border rounded p-4"
+            >
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-medium">
+                  Family Member #{i + 1}
+                </span>
+                <button
+                  className="bg-red-500 hover:bg-red-600 text-white rounded px-2 py-1 flex items-center"
+                  onClick={() => handleDeleteFamilyMember(i)}
+                >
+                  <FiTrash className="mr-1" />
+                </button>
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor={`familyName${i}`}>Frist Name</label>
+                <input
+                  id={`familyName${i}`}
+                  type="text"
+                  className="border rounded px-2 py-1"
+                  value={f.firstName}
+                  onChange={(e) => handleFamilyFristNameChange(i, e)}
+                  disabled={role === "Admin" && student.approved}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor={`familyName${i}`}>Last Name</label>
+                <input
+                  id={`familyName${i}`}
+                  type="text"
+                  className="border rounded px-2 py-1"
+                  value={f.lastName}
+                  onChange={(e) => handleFamilyLastNameChange(i, e)}
+                  disabled={role === "Admin" && student.approved}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor={`familyRelationship${i}`}>Relationship</label>
+                <select
+                  id={`familyRelationship${i}`}
+                  className="border rounded px-2 py-1"
+                  value={f.relationship}
+                  onChange={(e) => handleFamilyRelationshipChange(i, e)}
+                  disabled={role === "Admin" && student.approved}
+                >
+                  <option value="Parent">Parent</option>
+                  <option value="Sibling">Sibling</option>
+                  <option value="Spouse">Spouse</option>
+                </select>
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor={`familyNationality${i}`}>Nationality</label>
+                <select
+                  id={`familyNationality${i}`}
+                  className="border rounded px-2 py-1"
+                  value={f.nationality ? f.nationality.ID : 0} // Ensure a valid value is provided
+                  onChange={(e) => handleFamilyNationalityChange(i, e)}
+                  disabled={role === "Admin" && student.approved}
+                >
+                  {memoizedNationalities}
+                </select>
+              </div>
             </div>
-            <div className="flex flex-col gap-2">
-              <label htmlFor={`familyName${i}`}>Frist Name</label>
-              <input
-                id={`familyName${i}`}
-                type="text"
-                className="border rounded px-2 py-1"
-                value={f.firstName}
-                onChange={(e) => handleFamilyFristNameChange(i, e)}
-                disabled={role === "Admin" && student.approved}
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label htmlFor={`familyName${i}`}>Last Name</label>
-              <input
-                id={`familyName${i}`}
-                type="text"
-                className="border rounded px-2 py-1"
-                value={f.lastName}
-                onChange={(e) => handleFamilyLastNameChange(i, e)}
-                disabled={role === "Admin" && student.approved}
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label htmlFor={`familyRelationship${i}`}>Relationship</label>
-              <select
-                id={`familyRelationship${i}`}
-                className="border rounded px-2 py-1"
-                value={f.relationship}
-                onChange={(e) => handleFamilyRelationshipChange(i, e)}
-                disabled={role === "Admin" && student.approved}
-              >
-                <option value="Parent">Parent</option>
-                <option value="Sibling">Sibling</option>
-                <option value="Spouse">Spouse</option>
-              </select>
-            </div>
-            <div className="flex flex-col gap-2">
-              <label htmlFor={`familyNationality${i}`}>Nationality</label>
-              <select
-                id={`familyNationality${i}`}
-                className="border rounded px-2 py-1"
-                value={f.nationality ? f.nationality.ID : ""} // Ensure a valid value is provided
-                onChange={(e) => handleFamilyNationalityChange(i, e)}
-                disabled={role === "Admin" && student.approved}
-              >
-                {memoizedNationalities}
-              </select>
-            </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>No family members found</p>
+        )}
+
         <button
           className="bg-blue-500 hover:bg-blue-600 text-white rounded px-4 py-2 flex items-center"
           onClick={handleAddFamilyMember}
@@ -448,10 +446,11 @@ StudentModal.propTypes = {
       ID: PropTypes.number,
       Title: PropTypes.string,
     }),
-    family: PropTypes.arrayOf(
+    familyMembers: PropTypes.arrayOf(
       PropTypes.shape({
         ID: PropTypes.number,
-        name: PropTypes.string,
+        firstName: PropTypes.string,
+        lastName: PropTypes.string,
         relationship: PropTypes.string,
         dateOfBirth: PropTypes.string,
         nationality: PropTypes.shape({
@@ -472,7 +471,7 @@ StudentModal.defaultProps = {
     lastName: "",
     dateOfBirth: "",
     nationality: { ID: null, Title: "" },
-    family: [],
+    familyMembers: [],
   },
   role: "",
   onClose: () => {},

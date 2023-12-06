@@ -10,7 +10,7 @@ import {
 
 const LandingPage = () => {
   const [students, setStudents] = useState([]);
-  const [nationalities, setNationalities] = useState([]);
+  const [nationality, setNationality] = useState("");
   const [familyMembers, setFamilyMembers] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [role, setRole] = useState("Admin");
@@ -22,19 +22,16 @@ const LandingPage = () => {
       try {
         const studentData = await fetchStudents();
         setStudents(studentData);
-
-        const nationalityPromises = studentData.map((student) =>
-          fetchStudentNationality(student.ID)
+        const familyMembersData = await Promise.all(
+          studentData.map((student) => fetchFamilyMembers(student.ID))
         );
-        const familyMembersPromises = studentData.map((student) =>
-          fetchFamilyMembers(student.ID)
-        );
-
-        const nationalityData = await Promise.all(nationalityPromises);
-        const familyMembersData = await Promise.all(familyMembersPromises);
-        console.log(nationalityData);
-        // setNationalities(nationalityData.map((data) => data.nationality.Title));
+        
         setFamilyMembers(familyMembersData.map((data) => data.length));
+
+        const nationalityData = await Promise.all(
+          studentData.map((student) => fetchStudentNationality(student.ID))
+        );
+        setNationality(nationalityData[0].nationality.Title);
       } catch (error) {
         setError(error.message);
       }
@@ -49,12 +46,12 @@ const LandingPage = () => {
 
   const handleAddStudent = () => {
     const newStudent = {
-      id: students.length + 1,
+      ID: students.length + 1,
       firstName: "",
       lastName: "",
       dateOfBirth: "",
-      nationality: "",
-      family: [],
+      nationality: { ID: null, Title: "" },
+      familyMembers: [],
       approved: false,
     };
 
@@ -62,7 +59,9 @@ const LandingPage = () => {
     setShowModal(true);
   };
 
+
   const handleEditStudent = (student) => {
+    console.log(student);
     setSelectedStudent(student);
     setShowModal(true);
   };
@@ -135,9 +134,7 @@ const LandingPage = () => {
               <td className="border px-4 py-2 text-center">
                 {student.dateOfBirth}
               </td>
-              <td className="border px-4 py-2 text-center">
-                0
-              </td>
+              <td className="border px-4 py-2 text-center">{nationality}</td>
               <td className="border px-4 py-2 text-center">
                 <span>{familyMembers[index]}</span>
               </td>
