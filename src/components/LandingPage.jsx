@@ -25,7 +25,7 @@ const LandingPage = () => {
         const familyMembersData = await Promise.all(
           studentData.map((student) => fetchFamilyMembers(student.ID))
         );
-        
+
         setFamilyMembers(familyMembersData.map((data) => data.length));
 
         const nationalityData = await Promise.all(
@@ -58,7 +58,6 @@ const LandingPage = () => {
     setSelectedStudent(newStudent);
     setShowModal(true);
   };
-
 
   const handleEditStudent = (student) => {
     console.log(student);
