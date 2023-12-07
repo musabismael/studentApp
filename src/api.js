@@ -56,7 +56,7 @@ export const createFamilyMember = (id, familyMember) => {
     relationship,
     nationalityId: nationality.ID,
   };
-
+  console.log("formatted family member:", formattedFamilyMember)
   return axios
     .post(`/students/${id}/familyMembers`, formattedFamilyMember)
     .then((response) => response.data);
