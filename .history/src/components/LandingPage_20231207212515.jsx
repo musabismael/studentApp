@@ -135,7 +135,7 @@ const LandingPage = () => {
               <td className="border px-4 py-2 text-center">
                 {student.dateOfBirth}
               </td>
-              <td className="border px-4 py-2 text-center">loading..</td>
+              <td className="border px-4 py-2 text-center"></td>
               <td className="border px-4 py-2 text-center">
                 <span>{familyMembers[index]}</span>
               </td>
