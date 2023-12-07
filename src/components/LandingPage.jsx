@@ -25,7 +25,7 @@ const LandingPage = () => {
         const familyMembersData = await Promise.all(
           studentData.map((student) => fetchFamilyMembers(student.ID))
         );
-
+        
         setFamilyMembers(familyMembersData.map((data) => data.length));
 
         const nationalityData = await Promise.all(
@@ -46,7 +46,7 @@ const LandingPage = () => {
 
   const handleAddStudent = () => {
     const newStudent = {
-      id: students.length + 1,
+      // id: students.length + 1,
       firstName: "",
       lastName: "",
       dateOfBirth: "",
@@ -59,8 +59,9 @@ const LandingPage = () => {
     setShowModal(true);
   };
 
+
   const handleEditStudent = (student) => {
-    console.log(student);
+    // console.log(student);
     setSelectedStudent(student);
     setShowModal(true);
   };
@@ -124,6 +125,7 @@ const LandingPage = () => {
         </thead>
 
         <tbody>
+          {console.log(students)}
           {students.map((student, index) => (
             <tr key={student.ID}>
               <td className="border px-4 py-2 text-center">{student.ID}</td>
@@ -133,7 +135,7 @@ const LandingPage = () => {
               <td className="border px-4 py-2 text-center">
                 {student.dateOfBirth}
               </td>
-              <td className="border px-4 py-2 text-center">{nationality}</td>
+              <td className="border px-4 py-2 text-center">{student.nationality && student.nationality.Title}</td>
               <td className="border px-4 py-2 text-center">
                 <span>{familyMembers[index]}</span>
               </td>

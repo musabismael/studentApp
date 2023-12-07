@@ -31,6 +31,7 @@ const customStyles = {
 };
 
 const StudentModal = ({ student, role, onClose }) => {
+  // console.log('student:',student);
   const initialDateOfBirth = student.dateOfBirth
     ? new Date(student.dateOfBirth)
     : new Date();
@@ -50,7 +51,6 @@ const StudentModal = ({ student, role, onClose }) => {
       .then((data) => {
         setNationalities(data);
         if (!nationality?.ID) {
-          console.log(data);
           setNationality(data[0]);
         }
       })

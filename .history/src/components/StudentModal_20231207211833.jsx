@@ -31,6 +31,7 @@ const customStyles = {
 };
 
 const StudentModal = ({ student, role, onClose }) => {
+  // console.log('student:',student);
   const initialDateOfBirth = student.dateOfBirth
     ? new Date(student.dateOfBirth)
     : new Date();
@@ -50,8 +51,8 @@ const StudentModal = ({ student, role, onClose }) => {
       .then((data) => {
         setNationalities(data);
         if (!nationality?.ID) {
-          console.log(data);
           setNationality(data[0]);
+        //   console.log("setting nationality")
         }
       })
       .catch((error) => {
@@ -167,12 +168,15 @@ const StudentModal = ({ student, role, onClose }) => {
   };
 
   const handleSubmit = () => {
+    // console.log(student)
     if (!firstName || !lastName || !dateOfBirth || !nationality) {
       setError(
         "Please fill in all the fields: First Name, Last Name, Date of Birth, and Nationality."
       );
       return;
     }
+    // console.log(family);
+    // console.log(firstName, lastName, dateOfBirth, nationality)
     if (
       family && family.some(
         (f) => !f.firstName || !f.lastName || !f.relationship || !f.nationality

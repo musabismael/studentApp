@@ -50,7 +50,6 @@ const StudentModal = ({ student, role, onClose }) => {
       .then((data) => {
         setNationalities(data);
         if (!nationality?.ID) {
-          console.log(data);
           setNationality(data[0]);
         }
       })
