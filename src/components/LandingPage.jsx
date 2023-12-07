@@ -5,12 +5,10 @@ import {
   fetchStudents,
   updateStudent,
   fetchFamilyMembers,
-  fetchStudentNationality,
 } from "../api";
 
 const LandingPage = () => {
   const [students, setStudents] = useState([]);
-  const [nationality, setNationality] = useState("");
   const [familyMembers, setFamilyMembers] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [role, setRole] = useState("Admin");
@@ -25,13 +23,10 @@ const LandingPage = () => {
         const familyMembersData = await Promise.all(
           studentData.map((student) => fetchFamilyMembers(student.ID))
         );
-        
+
         setFamilyMembers(familyMembersData.map((data) => data.length));
 
-        const nationalityData = await Promise.all(
-          studentData.map((student) => fetchStudentNationality(student.ID))
-        );
-        setNationality(nationalityData[0].nationality.Title);
+        console.log(students);
       } catch (error) {
         setError(error.message);
       }
@@ -58,7 +53,6 @@ const LandingPage = () => {
     setSelectedStudent(newStudent);
     setShowModal(true);
   };
-
 
   const handleEditStudent = (student) => {
     // console.log(student);
@@ -125,7 +119,6 @@ const LandingPage = () => {
         </thead>
 
         <tbody>
-          {console.log(students)}
           {students.map((student, index) => (
             <tr key={student.ID}>
               <td className="border px-4 py-2 text-center">{student.ID}</td>
