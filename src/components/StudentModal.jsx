@@ -54,10 +54,10 @@ const StudentModal = ({ student, role, onClose }) => {
       .catch((error) => {
         console.error("Fetch Nationalities Error:", error.message);
       });
+
     if (student) {
       setModalIsOpen(true);
-    }
-    if (student) {
+
       fetchFamilyMembers(student.ID)
         .then((familyData) => {
           setFamily(familyData);
@@ -196,8 +196,8 @@ const StudentModal = ({ student, role, onClose }) => {
         .then(() => {
           return Promise.all(
             family.map((f) => {
-              if (f.id) {
-                return updateFamilyMember(f.id, {
+              if (f.ID) {
+                return updateFamilyMember(f.ID, {
                   firstName: f.firstName,
                   lastName: f.lastName,
                   relationship: f.relationship,
@@ -340,7 +340,7 @@ const StudentModal = ({ student, role, onClose }) => {
         {family && family.length > 0 ? (
           family.map((f, i) => (
             <div
-              key={f.id || i}
+              key={f.ID || i}
               className="flex flex-col gap-2 border rounded p-4"
             >
               <div className="flex justify-between items-center">

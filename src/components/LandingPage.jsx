@@ -46,7 +46,7 @@ const LandingPage = () => {
 
   const handleAddStudent = () => {
     const newStudent = {
-      ID: students.length + 1,
+      id: students.length + 1,
       firstName: "",
       lastName: "",
       dateOfBirth: "",
